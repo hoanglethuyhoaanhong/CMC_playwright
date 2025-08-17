@@ -1,8 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { Page } from 'playwright';
 
-
-test.describe('playwright demo', () => {
+test.describe('Playwright demo', () => {
   test('Login feature testing', async({page}) => {
     await page.goto('http://localhost:3000')
     await loginUser(page, 'Heath93', 's3cret')
@@ -27,17 +26,20 @@ test.describe('playwright demo', () => {
     await expect(notiText).toMatch('8')
   });
 
-  test('dismiss noti', async({page}) => {
+  test('Dismiss noti', async({page}) => {
     await page.goto('http://localhost:3000')
     await loginUser(page, 'Heath93', 's3cret')
     const notiListItem = page.locator("//span[contains(@class, 'MuiBadge')]//*[local-name()='svg' and @data-testid='NotificationsIcon']/following-sibling::*[1]")
     await page.waitForTimeout(3000)
-    const beforeNumber = await notiListItem.textContent();
+    const beforeNumberText = await notiListItem.textContent();
     await dismissNoti(page);
-    const afterNumber = await notiListItem.textContent();
-    await expect(beforeNumber).not.toEqual(afterNumber)
-  });
+    const afterNumberText = await notiListItem.textContent();
 
+    // Ép kiểu string -> number
+    const beforeNumber = parseInt(beforeNumberText || '0', 10);
+    const afterNumber = parseInt(afterNumberText || '0', 10);
+    expect(beforeNumber).toBe(afterNumber + 1);
+  });
 })
 
 async function loginUser(page: Page, username: string, password: string) {
